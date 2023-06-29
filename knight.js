@@ -4,7 +4,6 @@ class Knight {
     constructor(xpos,ypos){
         this.x = xpos
         this.y = ypos
-        this.visited = []
     }
     visitedSquare(){
         return new Square(this.x,this.y)
@@ -21,8 +20,10 @@ class Square {
     }
 }
 
-
-console.log(knightTravails([0,0],[3,6]))
+function printPath(start,paths,target){
+    console.log("The fastest path from ", [start.x,start.y] , "to ", [target.x,target.y], " was ", paths)
+}
+console.log(knightTravails([0,0],[4,8]))
 function knightTravails(start,target){
     const visited = new Set()
     const startX = start[0]
@@ -39,23 +40,24 @@ function knightTravails(start,target){
     let queue = []
     const paths = []
     let steps = 0
-    queue.push([[knight.x,knight.y],[0,0]])
+    queue.push([[knight.x,knight.y],[[0,0]]])
     while(queue.length){
         let [current, path] = queue.shift()
         //console.log(current)
         let currentX = current[0]
         let currentY = current[1]
         if(currentX == targetSquare.x && currentY == targetSquare.y){
-            paths.push(path)
-            return console.log("target found in ",paths)
+            path.forEach((path)=>paths.push(path))
+            paths.reverse()
+            return printPath(startSquare,paths,targetSquare)
         }
         for(const offset of travelOffsets){
             let nextX = currentX + offset[0]
             let nextY = currentY + offset[1]
-            let squareToVisit = [nextX,nextY]
+            let next = [nextX,nextY]
             if(!visited.has(nextX+","+nextY)){
                 visited.add(nextX+","+nextY)
-                queue.push([squareToVisit,[squareToVisit,...path]])
+                queue.push([next,[next,...path]])
             }
         }
     }
